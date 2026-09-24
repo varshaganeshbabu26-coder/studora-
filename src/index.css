@@ -1,0 +1,95 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #000000;
+  color: #FFFFFF;
+}
+
+html {
+  background: #000000;
+}
+
+button {
+  background: #000000;
+  border: 1px solid #C0C0C0;
+  color: #FFFFFF;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+svg {
+  color: #C0C0C0 !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+strong {
+  color: #FFFFFF;
+}
+
+label,
+p,
+li,
+span,
+small,
+textarea,
+input,
+select,
+option,
+::placeholder {
+  color: #FFFFFF;
+}
+
+a {
+  color: #FFFFFF;
+}
+
+.workspace-nav a[aria-current='page'],
+.workspace-nav a[aria-current='page'] span {
+  color: #FFFFFF !important;
+}
+
+.gold-shimmer {
+  color: #FFFFFF !important;
+  animation: gold-shimmer 9s ease-in-out infinite;
+}
+
+@keyframes gold-shimmer {
+  0%,
+  72%,
+  100% {
+    color: #FFFFFF;
+  }
+
+  86% {
+    color: #C0C0C0;
+  }
+}
+
+input,
+select,
+textarea {
+  background: #000000;
+  border-color: #C0C0C0;
+  color: #FFFFFF;
+}
