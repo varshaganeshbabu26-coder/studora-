@@ -1,10 +1,11 @@
 ﻿import { forwardRef } from 'react'
 
 const variantClasses = {
-  primary: 'border border-[#C0C0C0] bg-[#000000] text-[#FFFFFF] shadow-none hover:bg-[#C0C0C0] hover:text-[#000000] focus-visible:ring-[#C0C0C0]',
-  secondary: 'border border-[#C0C0C0] bg-[#000000] text-[#FFFFFF] hover:bg-[#C0C0C0] hover:text-[#000000] focus-visible:ring-[#C0C0C0]',
-  outline: 'border border-[#C0C0C0] bg-[#000000] text-[#FFFFFF] hover:border-[#C0C0C0] hover:bg-[#C0C0C0] hover:text-[#000000] focus-visible:ring-[#C0C0C0]',
-  ghost: 'border border-[#C0C0C0] bg-[#000000] text-[#FFFFFF] hover:bg-[#C0C0C0] hover:text-[#000000] focus-visible:ring-[#C0C0C0]',
+  primary: 'bg-gradient-to-r from-pink-400 to-rose-400 text-white shadow-md shadow-pink-200/50 hover:from-pink-500 hover:to-rose-500 focus-visible:ring-pink-300',
+  secondary: 'bg-white/70 text-gray-700 border border-white/50 hover:bg-white/90 focus-visible:ring-pink-300',
+  outline: 'border-2 border-pink-300 bg-white/50 text-pink-600 hover:bg-pink-50 focus-visible:ring-pink-300',
+  ghost: 'bg-transparent text-gray-600 hover:bg-white/50 focus-visible:ring-pink-300',
+  danger: 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 focus-visible:ring-red-300',
 }
 
 const sizeClasses = {
@@ -21,7 +22,7 @@ const Button = forwardRef(function Button(
     <Component
       ref={ref}
       {...(Component === 'button' ? { type } : {})}
-      className={`inline-flex items-center justify-center gap-2 rounded-xl font-bold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-offset-black ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-full font-bold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       {...props}
     >
       {children}

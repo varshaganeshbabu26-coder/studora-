@@ -1,9 +1,9 @@
 ﻿const variantClasses = {
-  default: 'bg-[#C0C0C0] text-[#C0C0C0]',
-  primary: 'bg-[#C0C0C0] text-[#C0C0C0]',
-  success: 'bg-[#C0C0C0] text-[#C0C0C0]',
-  warning: 'bg-[#C0C0C0] text-[#C0C0C0]',
-  danger: 'bg-[#C0C0C0] text-[#C0C0C0]',
+  default: 'bg-gray-100 text-gray-600',
+  primary: 'bg-pink-100 text-pink-600',
+  success: 'bg-green-100 text-green-600',
+  warning: 'bg-amber-100 text-amber-600',
+  danger: 'bg-red-100 text-red-600',
 }
 
 export default function Badge({ variant = 'default', className = '', children }) {

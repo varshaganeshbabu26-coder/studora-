@@ -11,8 +11,8 @@ const Input = forwardRef(function Input(
   return (
     <div className="space-y-2">
       {label && (
-        <label htmlFor={inputId} className="block text-sm font-semibold text-[#FFFFFF]">
-          {label} {required && <span className="text-[#FFFFFF]">*</span>}
+        <label htmlFor={inputId} className="block text-sm font-semibold text-gray-700">
+          {label} {required && <span className="text-pink-500">*</span>}
         </label>
       )}
       <input
@@ -21,10 +21,10 @@ const Input = forwardRef(function Input(
         required={required}
         aria-invalid={Boolean(error)}
         aria-describedby={error || hint ? messageId : undefined}
-        className={`w-full rounded-xl border border-[#C0C0C0] bg-[#000000] px-4 py-3 text-sm text-[#FFFFFF] outline-none transition placeholder:text-[#FFFFFF] focus:border-[#C0C0C0] focus:ring-1 focus:ring-[#C0C0C0] disabled:cursor-not-allowed disabled:opacity-60 ${error ? 'border-[#C0C0C0]' : ''} ${className}`}
+        className={`w-full rounded-xl border border-white/40 bg-white/60 px-4 py-3 text-sm text-gray-700 outline-none transition placeholder:text-gray-400 focus:border-pink-300 focus:ring-2 focus:ring-pink-200 disabled:cursor-not-allowed disabled:opacity-60 ${error ? 'border-red-300' : ''} ${className}`}
         {...props}
       />
-      {(error || hint) && <p id={messageId} className="text-xs text-[#FFFFFF]">{error || hint}</p>}
+      {(error || hint) && <p id={messageId} className="text-xs text-gray-500">{error || hint}</p>}
     </div>
   )
 })

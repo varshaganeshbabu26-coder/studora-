@@ -1,21 +1,15 @@
-﻿import {
-  ArrowRight,
-  BookOpen,
-  BrainCircuit,
-  CheckCircle2,
-  ChevronRight,
-  Clock3,
-  Flame,
-  Lightbulb,
-  ListChecks,
-  Play,
-  Sparkles,
-  Trophy,
-} from 'lucide-react'
+﻿import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import Button from '../components/Button'
-import Card from '../components/Card'
-import ProgressBar from '../components/ProgressBar'
+import { Sparkles, CheckCircle2, Circle, MapPin, Trophy, Flame, Clock3 } from 'lucide-react'
+import GlassCard from '../components/GlassCard'
+import BunnyAvatar from '../components/BunnyAvatar'
+import IslandNode from '../components/IslandNode'
+import WorldMap from '../components/WorldMap'
+import SceneBackground from '../components/SceneBackground'
+import { FloatingTopNav, FloatingDockNav } from '../components/FloatingNav'
+import mockSubjects from '../data/mockSubjects'
+import mockTasks from '../data/mockTasks'
+import { getCountryById } from '../data/countries'
 
 const stats = [
   { label: 'Progress', value: '68%', icon: Trophy },
@@ -23,113 +17,230 @@ const stats = [
   { label: 'Study', value: '12.5 hrs', icon: Clock3 },
 ]
 
-const studyPlan = [
-  { title: 'DSA', duration: '45 min', status: 'Pending', accent: 'bg-[#000000]' },
-  { title: 'C++', duration: '30 min', status: 'Done', accent: 'bg-[#000000]' },
-  { title: 'Quiz', duration: '15 min', status: 'Pending', accent: 'bg-[#000000]' },
-]
+function generateMotivation(tasks, todayTasks, currentSubject, streakDays) {
+  const totalTasks = tasks.length
+  const completedTasks = tasks.filter((t) => t.completed).length
+  const todayTotal = todayTasks.length
+  const todayCompleted = todayTasks.filter((t) => t.completed).length
+  const todayRemaining = todayTotal - todayCompleted
+  const progress = currentSubject.progress
+
+  // Daily goal completed
+  if (todayTotal > 0 && todayCompleted === todayTotal) {
+    return "You did it! Today's study goal is complete 🎉"
+  }
+
+  // Strong streak
+  if (streakDays >= 7) {
+    return `${streakDays} days strong! Your consistency is building a great habit 🔥`
+  }
+
+  // Tasks almost done
+  if (todayRemaining > 0 && todayRemaining <= 2 && todayCompleted > 0) {
+    return `You're close to finishing today's goals. One more push! 💪`
+  }
+
+  // Low progress — encouraging start
+  if (progress < 30 && completedTasks < 3) {
+    return 'No pressure—start with one small task and build from there 🌱'
+  }
+
+  // Good progress
+  if (progress >= 70) {
+    return `Amazing! You're ${progress}% through ${currentSubject.name}. Keep soaring! ✨`
+  }
+
+  // Default motivational
+  const defaults = [
+    'Every task you complete is a step forward! 🚀',
+    'Your future self will thank you for studying today! 🌟',
+    'Small progress is still progress. Keep going! 🌈',
+    'You are building something great, one task at a time! 🏗️',
+  ]
+  return defaults[Math.floor(Math.random() * defaults.length)]
+}
 
 export default function Dashboard() {
+  const [tasks, setTasks] = useState(mockTasks)
+  const currentSubject = mockSubjects[0]
+  const currentCountry = getCountryById(currentSubject.country)
+  const todayTasks = tasks.filter((t) => t.dueDate === '2026-09-28')
+  const visitedCountries = mockSubjects.map((s) => s.country)
+  const stamps = mockSubjects.flatMap((s) => s.stamps)
+  const streakDays = 7
+
+  const motivationMessage = useMemo(
+    () => generateMotivation(tasks, todayTasks, currentSubject, streakDays),
+    [tasks, todayTasks, currentSubject, streakDays]
+  )
+
+  function toggleTask(taskId) {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === taskId ? { ...t, completed: !t.completed } : t))
+    )
+  }
+
   return (
-    <section className="mx-auto max-w-[90rem] space-y-8 px-1 py-1 bg-[#000000]">
-      <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#C0C0C0]">Workspace</p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight bg-[#000000] sm:text-4xl">Good evening, Alex Student</h1>
+    <SceneBackground>
+      <FloatingTopNav />
+      <FloatingDockNav />
+
+      {/* Floating Bunny + Motivation — between nav and Journey card */}
+      <div className="mx-auto flex max-w-7xl items-center justify-center gap-4 px-4 pt-24 md:pt-28">
+        <div className="bunny-float-wrapper flex items-center gap-4">
+          <BunnyAvatar size="xl" mood="happy" />
+          <p className="max-w-[200px] rounded-2xl border border-white/40 bg-white/70 px-4 py-2 text-sm font-semibold text-pink-600 shadow-md backdrop-blur-md">
+            {motivationMessage}
+          </p>
         </div>
-        <p className="text-sm bg-[#000000]">Ready to continue learning?</p>
       </div>
 
-      <div className="grid gap-5 md:grid-cols-3">
-        {stats.map(({ label, value, icon: Icon }) => (
-          <Card key={label} className="border-[#C0C0C0] bg-[#000000] p-5 transition duration-200 hover:-translate-y-1 hover:border-[#C0C0C0] hover:shadow-none">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] bg-[#000000]">{label}</p>
-                <p className="mt-3 text-3xl font-bold bg-[#000000]">{value}</p>
-              </div>
-              <div className="rounded-2xl bg-[#000000] p-3 text-[#C0C0C0] ring-1 ring-[#C0C0C0]">
-                <Icon className="h-5 w-5" />
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
-
-      <Card className="overflow-hidden border-[#C0C0C0] bg-[#000000] p-5 sm:p-6">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#C0C0C0]">Continue Learning</p>
-            <h2 className="mt-2 text-2xl font-bold bg-[#000000]">Data Structures & Algorithms</h2>
-          </div>
-          <Button as={Link} to="/app/subjects" variant="ghost" size="sm">
-            View course <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-
-        <div className="mt-6 rounded-2xl border border-[#C0C0C0] bg-[#000000] p-5">
-          <div className="mb-3 flex items-center justify-between gap-3 text-sm bg-[#000000]">
-            <span>Progress</span>
-            <span className="font-semibold text-[#C0C0C0]">72%</span>
-          </div>
-          <ProgressBar value={72} size="md" className="!space-y-2" />
-
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-1">
-              <p className="text-sm bg-[#000000]">Next</p>
-              <p className="font-medium bg-[#000000]">Linked Lists</p>
-            </div>
-            <Button as={Link} to="/app/tutor" className="bg-[#000000] text-[#C0C0C0] hover:bg-[#000000]">
-              <Play className="h-4 w-4" /> Continue
-            </Button>
-          </div>
-        </div>
-      </Card>
-
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,0.9fr)]">
-        <Card className="border-[#C0C0C0] bg-[#000000] p-5 sm:p-6">
-          <div className="mb-5 flex items-center justify-between gap-3">
-            <h2 className="text-xl font-bold bg-[#000000]">Today's Study Plan</h2>
-            <Button as={Link} to="/app/planner" variant="ghost" size="sm">
-              Open planner <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            {studyPlan.map((item) => (
-              <div key={item.title} className="rounded-2xl border border-[#C0C0C0] bg-[#000000] p-4 shadow-none ring-1 ring-[#C0C0C0]">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="rounded-xl bg-[#000000] p-2 text-[#C0C0C0] ring-1 ring-[#C0C0C0]">
-                    {item.title === 'DSA' ? <BookOpen className="h-4 w-4" /> : item.title === 'C++' ? <BrainCircuit className="h-4 w-4" /> : <ListChecks className="h-4 w-4" />}
-                  </div>
-                  <span className="text-xs font-semibold uppercase tracking-[0.16em] bg-[#000000]">{item.duration}</span>
+      <div className="mx-auto max-w-7xl px-4 pb-24 pt-4">
+        {/* Hero Section */}
+        <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+          {/* Left: Greeting + Current Quest */}
+          <div className="space-y-6">
+            <GlassCard className="p-6 sm:p-8">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-wider text-pink-500">Your journey</p>
+                  <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
+                    Hey, <span className="text-gradient">Alex</span>
+                  </h1>
+                  <p className="mt-2 text-gray-600">
+                    Your bunny is exploring <strong>{currentCountry.name}</strong> — {currentCountry.landmark} awaits!
+                  </p>
                 </div>
-                <p className="mt-4 text-lg font-semibold bg-[#000000]">{item.title}</p>
-                <p className={`mt-3 text-sm ${item.status === 'Done' ? 'bg-[#000000]' : 'bg-[#000000]'}`}>
-                  {item.status === 'Done' ? 'âœ“ Done' : 'â—‹ Pending'}
+              </div>
+
+              {/* Current Quest */}
+              <div className="mt-6 rounded-2xl bg-gradient-to-r from-pink-50 to-lavender-50 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wider text-pink-500">Current quest</p>
+                    <h2 className="mt-1 text-lg font-bold">{currentSubject.name}</h2>
+                  </div>
+                  <span className="rounded-full bg-white/80 px-3 py-1 text-sm font-bold text-pink-600">
+                    {currentSubject.progress}%
+                  </span>
+                </div>
+                <div className="mt-3 h-3 overflow-hidden rounded-full bg-white/60">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-pink-400 to-rose-400 transition-all duration-700"
+                    style={{ width: `${currentSubject.progress}%` }}
+                  />
+                </div>
+                <p className="mt-2 text-xs text-gray-500">
+                  {currentSubject.completedTasks} of {tasks.filter((t) => t.subject === currentSubject.name).length} tasks completed
                 </p>
               </div>
-            ))}
-          </div>
-        </Card>
 
-        <Card className="border-[#C0C0C0] bg-[#000000] p-5 text-[#C0C0C0] sm:p-6">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#C0C0C0]">AI Recommendation</p>
-              <h2 className="mt-2 text-xl font-bold">Practice session</h2>
-            </div>
-            <Lightbulb className="h-5 w-5" />
+              {/* Stats */}
+              <div className="mt-6 grid grid-cols-3 gap-3">
+                {stats.map(({ label, value, icon: Icon }) => (
+                  <div key={label} className="rounded-2xl bg-white/50 p-3 text-center">
+                    <Icon className="mx-auto h-5 w-5 text-pink-400" />
+                    <p className="mt-1 text-lg font-bold">{value}</p>
+                    <p className="text-xs text-gray-500">{label}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Quick Ask AI */}
+              <Link
+                to="/app/tutor"
+                className="btn-primary mt-6 flex items-center justify-center gap-2 w-full sm:w-auto"
+              >
+                <Sparkles className="h-4 w-4" />
+                Ask AI Tutor
+              </Link>
+            </GlassCard>
+
+            {/* Today's Plan */}
+            <GlassCard className="p-6">
+              <h2 className="text-lg font-bold">Today's Plan</h2>
+              <div className="mt-4 space-y-3">
+                {todayTasks.map((task) => (
+                  <button
+                    key={task.id}
+                    type="button"
+                    onClick={() => toggleTask(task.id)}
+                    className="flex w-full items-center gap-3 rounded-xl bg-white/50 p-3 text-left transition hover:bg-white/80"
+                  >
+                    {task.completed ? (
+                      <CheckCircle2 className="h-5 w-5 shrink-0 text-green-500" />
+                    ) : (
+                      <Circle className="h-5 w-5 shrink-0 text-gray-400" />
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className={`text-sm font-medium ${task.completed ? 'text-gray-400 line-through' : 'text-gray-700'}`}>
+                        {task.title}
+                      </p>
+                      <p className="text-xs text-gray-500">{task.subject}</p>
+                    </div>
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${
+                      task.priority === 'high' ? 'bg-red-100 text-red-600' :
+                      task.priority === 'medium' ? 'bg-amber-100 text-amber-600' :
+                      'bg-green-100 text-green-600'
+                    }`}>
+                      {task.priority}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </GlassCard>
           </div>
-          <p className="mt-5 text-sm leading-6 text-[#C0C0C0]">
-            You are struggling with Linked Lists. Try this 15-minute practice session.
-          </p>
-          <Button as={Link} to="/app/tutor" variant="outline" size="sm" className="mt-6 border-black text-[#C0C0C0] hover:bg-[#000000] hover:text-[#C0C0C0]">
-            Start Practice <ArrowRight className="h-4 w-4" />
-          </Button>
-        </Card>
+
+          {/* Right: Island + Toolbox + Map */}
+          <div className="space-y-6">
+            {/* Current Island */}
+            <GlassCard className="flex flex-col items-center p-6">
+              <IslandNode
+                country={currentCountry}
+                progress={currentSubject.progress}
+                isActive
+                size="lg"
+              />
+              <h3 className="mt-4 text-lg font-bold">{currentCountry.name}</h3>
+              <p className="text-sm text-gray-500">{currentCountry.landmark}</p>
+              <p className="mt-1 text-xs text-gray-400">{currentCountry.description}</p>
+            </GlassCard>
+
+            {/* Subject Toolbox */}
+            <GlassCard className="p-4">
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-pink-500">Your Subjects</h3>
+              <div className="grid grid-cols-3 gap-2">
+                {mockSubjects.map((subject) => {
+                  const country = getCountryById(subject.country)
+                  return (
+                    <Link
+                      key={subject.name}
+                      to={`/app/subjects`}
+                      className="flex flex-col items-center gap-1 rounded-xl p-2 transition hover:bg-white/60"
+                    >
+                      <span className="text-2xl" role="img" aria-label={country.name}>
+                        {country.flag}
+                      </span>
+                      <span className="text-xs font-medium text-gray-600 truncate w-full text-center">
+                        {subject.name}
+                      </span>
+                    </Link>
+                  )
+                })}
+              </div>
+            </GlassCard>
+
+            {/* Mini World Map */}
+            <WorldMap visitedCountries={visitedCountries} stamps={stamps} />
+          </div>
+        </div>
+
+        {/* Scroll hint */}
+        <p className="mt-8 text-center text-sm text-gray-400">
+          <MapPin className="mr-1 inline h-4 w-4" />
+          Scroll to explore your study world
+        </p>
       </div>
-
-    </section>
+    </SceneBackground>
   )
 }
