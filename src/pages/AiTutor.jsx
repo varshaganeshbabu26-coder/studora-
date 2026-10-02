@@ -2,7 +2,7 @@
 import { Bot, Lightbulb, MessageCircle, Plus, Send, Sparkles, Trash2, UserRound } from 'lucide-react'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
-import Card from '../components/Card'
+import GlassCard from '../components/GlassCard'
 import mockChatHistory from '../data/mockChatHistory'
 
 const suggestedPrompts = [
@@ -80,29 +80,29 @@ export default function AiTutor() {
       <header className="flex shrink-0 items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="rounded-lg bg-[#000000] p-2 text-[#C0C0C0]"><Sparkles className="h-4 w-4" /></span>
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#C0C0C0]">Study support</p>
+            <span className="rounded-lg bg-gradient-to-br from-pink-100 to-lavender-100 p-2 text-pink-500"><Sparkles className="h-4 w-4" /></span>
+            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-pink-500">Study support</p>
           </div>
-          <h1 className="mt-2 text-2xl font-bold tracking-tight bg-[#000000] sm:text-3xl dark:bg-[#000000]">AI Tutor</h1>
-          <p className="mt-1 text-sm bg-[#000000] dark:bg-[#000000]">Ask for explanations, examples, quizzes, or help fixing mistakes.</p>
+          <h1 className="mt-2 text-2xl font-bold tracking-tight text-gray-800 sm:text-3xl">AI Tutor</h1>
+          <p className="mt-1 text-sm text-gray-600">Ask for explanations, examples, quizzes, or help fixing mistakes.</p>
         </div>
         <div className="flex items-center gap-2">
           <Button type="button" variant="ghost" size="sm" onClick={handleNewChat} className="hidden sm:inline-flex">
             <Plus className="h-4 w-4" /> New chat
           </Button>
-          <Badge variant="primary"><span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-[#000000]" />Online</Badge>
+          <Badge variant="primary"><span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-green-500" />Online</Badge>
         </div>
       </header>
 
       <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-[minmax(0,1fr)_17rem]">
-        <Card className="flex min-h-0 flex-col overflow-hidden p-0">
+        <GlassCard className="flex min-h-0 flex-col overflow-hidden p-0">
           <div ref={messageListRef} className="min-h-0 flex-1 space-y-5 overflow-y-auto p-4 sm:p-6" aria-live="polite">
             <div className="mx-auto mb-6 max-w-md text-center">
-              <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-[#000000] text-[#C0C0C0]">
+              <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-100 to-lavender-100 text-pink-500">
                 <Bot className="h-6 w-6" />
               </div>
-              <p className="mt-3 text-sm font-semibold bg-[#000000]">Your AI study partner</p>
-              <p className="mt-1 text-xs leading-5 bg-[#000000]">Ask for an explanation, a practice question, or a new way to remember something.</p>
+              <p className="mt-3 text-sm font-semibold text-gray-800">Your AI study partner</p>
+              <p className="mt-1 text-xs leading-5 text-gray-500">Ask for an explanation, a practice question, or a new way to remember something.</p>
             </div>
 
             {messages.map((message, index) => {
@@ -110,14 +110,18 @@ export default function AiTutor() {
 
               return (
                 <div key={`${message.timestamp}-${index}`} className={`flex items-end gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${isUser ? 'order-2 bg-[#000000] text-[#C0C0C0]' : 'bg-[#000000] text-[#C0C0C0]'}`}>
+                  <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${isUser ? 'order-2 bg-gradient-to-r from-pink-400 to-rose-400 text-white' : 'bg-white/70 text-pink-500'}`}>
                     {isUser ? <UserRound className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
                   </div>
                   <div className={`max-w-[85%] sm:max-w-[72%] ${isUser ? 'order-1 items-end' : 'items-start'}`}>
-                    <div className="rounded-2xl border border-[#C0C0C0] bg-[#000000] px-4 py-3 text-sm leading-6 text-[#FFFFFF]">
+                    <div className={`rounded-2xl border px-4 py-3 text-sm leading-6 ${
+                      isUser
+                        ? 'border-pink-200 bg-gradient-to-r from-pink-400 to-rose-400 text-white'
+                        : 'border-white/50 bg-white/70 text-gray-700'
+                    }`}>
                       <p className="whitespace-pre-wrap">{message.text}</p>
                     </div>
-                    <p className={`mt-1 px-1 text-[#C0C0C0] bg-[#000000] ${isUser ? 'text-right' : ''}`}>
+                    <p className={`mt-1 px-1 text-xs text-gray-400 ${isUser ? 'text-right' : ''}`}>
                       {formatTime(message.timestamp)}
                     </p>
                   </div>
@@ -127,14 +131,14 @@ export default function AiTutor() {
 
             {isThinking && (
               <div className="flex items-end gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#000000] text-[#C0C0C0]">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/70 text-pink-500">
                   <Bot className="h-4 w-4" />
                 </div>
-                <div className="rounded-2xl rounded-bl-md bg-[#000000] px-4 py-3">
+                <div className="rounded-2xl rounded-bl-md bg-white/70 px-4 py-3">
                   <span className="flex gap-1">
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#000000] [animation-delay:-0.2s]" />
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#000000] [animation-delay:-0.1s]" />
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#000000]" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-pink-400 [animation-delay:-0.2s]" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-pink-400 [animation-delay:-0.1s]" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-pink-400" />
                   </span>
                 </div>
               </div>
@@ -142,8 +146,8 @@ export default function AiTutor() {
 
           </div>
 
-          <form onSubmit={handleSubmit} className="shrink-0 border-t border-[#C0C0C0] bg-[#000000] p-3 sm:p-4">
-            <div className="flex items-end gap-2 rounded-2xl border border-[#C0C0C0] bg-[#000000] p-2 focus-within:border-[#C0C0C0] focus-within:ring-1 focus-within:ring-[#C0C0C0]">
+          <form onSubmit={handleSubmit} className="shrink-0 border-t border-white/50 bg-white/30 p-3 sm:p-4">
+            <div className="flex items-end gap-2 rounded-2xl border border-white/50 bg-white/70 p-2 focus-within:border-pink-300 focus-within:ring-1 focus-within:ring-pink-200">
               <textarea
                 value={draft}
                 onChange={(event) => setDraft(event.target.value)}
@@ -151,7 +155,7 @@ export default function AiTutor() {
                 rows="1"
                 placeholder="Ask your tutor anything..."
                 aria-label="Message AI Tutor"
-                className="max-h-32 min-h-[2.5rem] flex-1 resize-none bg-[#000000] px-2 py-2 text-sm text-[#FFFFFF] outline-none placeholder:text-[#FFFFFF]"
+                className="max-h-32 min-h-[2.5rem] flex-1 resize-none bg-transparent px-2 py-2 text-sm text-gray-700 outline-none placeholder:text-gray-400"
               />
               <Button type="submit" className="h-10 w-10 shrink-0 p-0" aria-label="Send message" disabled={!draft.trim() || isThinking}>
                 <Send className="h-4 w-4" />
@@ -159,19 +163,19 @@ export default function AiTutor() {
             </div>
 
             <div className="mt-2 flex items-center justify-between gap-3 px-2">
-              <p className="hidden text-[#C0C0C0] bg-[#000000] sm:block">Press Enter to send Â· Shift + Enter for a new line</p>
-              <button type="button" onClick={handleNewChat} className="inline-flex items-center gap-1 text-[#C0C0C0] font-medium text-[#C0C0C0] hover:bg-[#000000]">
+              <p className="hidden text-xs text-gray-500 sm:block">Press Enter to send · Shift + Enter for a new line</p>
+              <button type="button" onClick={handleNewChat} className="inline-flex items-center gap-1 text-sm font-medium text-gray-500 transition hover:text-pink-600">
                 <Trash2 className="h-3.5 w-3.5" /> Clear chat
               </button>
             </div>
           </form>
-        </Card>
+        </GlassCard>
 
         <aside className="hidden space-y-4 lg:block">
-          <Card className="p-5">
+          <GlassCard className="p-5">
             <div className="flex items-center gap-2">
-              <Lightbulb className="h-4 w-4 text-[#C0C0C0]" />
-              <h2 className="font-bold bg-[#000000] dark:bg-[#000000]">Quick actions</h2>
+              <Lightbulb className="h-4 w-4 text-pink-500" />
+              <h2 className="font-bold text-gray-800">Quick actions</h2>
             </div>
             <div className="mt-4 space-y-2">
               {suggestedPrompts.map((prompt) => (
@@ -180,19 +184,19 @@ export default function AiTutor() {
                   type="button"
                   onClick={() => sendMessage(prompt)}
                   disabled={isThinking}
-                  className="flex w-full items-start gap-2 rounded-xl border border-[#C0C0C0] px-3 py-2.5 text-left text-xs font-medium leading-5 bg-[#000000] transition hover:bg-[#000000] hover:text-[#C0C0C0] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#000000]"
+                  className="flex w-full items-start gap-2 rounded-xl border border-white/50 bg-white/50 px-3 py-2.5 text-left text-xs font-medium leading-5 text-gray-600 transition hover:bg-white/80 hover:text-pink-600 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <MessageCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                   {prompt}
                 </button>
               ))}
             </div>
-          </Card>
+          </GlassCard>
 
-          <Card className="bg-[#000000] p-5 text-[#C0C0C0]">
-            <p className="text-sm font-semibold">Study mode</p>
-            <p className="mt-2 text-xs leading-5 text-[#C0C0C0]">Ask for definitions, examples, misconceptions, or revision questions tailored to your topic.</p>
-          </Card>
+          <GlassCard className="p-5">
+            <p className="text-sm font-semibold text-gray-800">Study mode</p>
+            <p className="mt-2 text-xs leading-5 text-gray-600">Ask for definitions, examples, misconceptions, or revision questions tailored to your topic.</p>
+          </GlassCard>
         </aside>
       </div>
     </section>

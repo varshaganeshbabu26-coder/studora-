@@ -1,41 +1,53 @@
-import { useState, useMemo, useRef } from 'react'
-import { Search, Plus, ArrowUpDown, MapPin, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useState, useMemo, useEffect } from 'react'
+import { Search, Plus, ArrowUpDown, Atom, Dna, FlaskConical, Globe, Languages, Sigma } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import GlassCard from '../components/GlassCard'
 import BunnyAvatar from '../components/BunnyAvatar'
 import SubjectIsland from '../components/SubjectIsland'
 import AddSubjectModal from '../components/AddSubjectModal'
 import WorldMap from '../components/WorldMap'
-import CountryBackground from '../components/CountryBackground'
 import { FloatingTopNav, FloatingDockNav } from '../components/FloatingNav'
-import Badge from '../components/Badge'
 import Button from '../components/Button'
-import mockSubjects from '../data/mockSubjects'
 import mockTasks from '../data/mockTasks'
 import { getCountryById } from '../data/countries'
+import { loadSubjects, saveSubjects, slugifySubject } from '../data/subjectStorage'
 
 const filterOptions = ['All', 'In progress', 'Completed', 'Not started']
 const sortOptions = ['recent', 'progress', 'A-Z']
+const subjectIcons = {
+  Dna,
+  Sigma,
+  Globe2: Globe,
+  FlaskConical,
+  Languages,
+  Atom,
+}
 
 export default function Subjects() {
-  const [subjects, setSubjects] = useState(mockSubjects)
+  const [subjects, setSubjects] = useState(loadSubjects)
+  const [saveError, setSaveError] = useState('')
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('All')
   const [sort, setSort] = useState('recent')
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingSubject, setEditingSubject] = useState(null)
   const [deleteConfirm, setDeleteConfirm] = useState(null)
-  const [defaultCountry] = useState(() => {
-    const firstSubject = mockSubjects[0]
-    return firstSubject ? getCountryById(firstSubject.country) : null
-  })
-  const carouselRef = useRef(null)
-
   const usedCountries = subjects.map((s) => s.country)
   const visitedCountries = [...new Set(subjects.map((s) => s.country))]
   const stamps = subjects.flatMap((s) => s.stamps || [])
   const totalTasks = mockTasks.length
   const completedTasks = mockTasks.filter((t) => t.completed).length
   const kmTraveled = completedTasks * 12
+
+  useEffect(() => {
+    try {
+      saveSubjects(subjects)
+      setSaveError('')
+    } catch (error) {
+      console.error('Could not save subjects:', error)
+      setSaveError('Your subject changes could not be saved on this device.')
+    }
+  }, [subjects])
 
   const filteredSubjects = useMemo(() => {
     let result = [...subjects]
@@ -65,8 +77,6 @@ export default function Subjects() {
 
     return result
   }, [subjects, search, filter, sort])
-
-  const bgCountry = defaultCountry
 
   function handleSaveSubject(data) {
     if (editingSubject) {
@@ -100,19 +110,17 @@ export default function Subjects() {
     setDeleteConfirm(null)
   }
 
-  function scrollCarousel(direction) {
-    if (carouselRef.current) {
-      const scrollAmount = 320
-      carouselRef.current.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' })
-    }
-  }
-
   return (
-    <CountryBackground country={bgCountry}>
+    <>
       <FloatingTopNav />
       <FloatingDockNav />
 
       <div className="mx-auto max-w-7xl px-4 pb-24 pt-24 md:pt-28">
+        {saveError && (
+          <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
+            {saveError}
+          </p>
+        )}
         <div className="grid gap-6 lg:grid-cols-[280px_1fr_280px]">
           {/* Left Panel: Search, Filter, Stats */}
           <div className="space-y-4">
@@ -191,39 +199,17 @@ export default function Subjects() {
             </GlassCard>
           </div>
 
-          {/* Center: Destination Carousel */}
+          {/* Center: Subject destinations */}
           <div>
             {filteredSubjects.length > 0 ? (
               <div className="relative">
-                {/* Carousel navigation */}
                 <div className="mb-4 flex items-center justify-between">
-                  <Badge variant="primary">{filteredSubjects.length} destinations</Badge>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => scrollCarousel(-1)}
-                      className="rounded-full bg-white/60 p-2 text-gray-600 shadow-md transition hover:bg-white/90"
-                      aria-label="Scroll left"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => scrollCarousel(1)}
-                      className="rounded-full bg-white/60 p-2 text-gray-600 shadow-md transition hover:bg-white/90"
-                      aria-label="Scroll right"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </div>
+                  <span className="rounded-full bg-white/60 px-3 py-1.5 text-xs font-semibold text-pink-600 shadow-sm">
+                    {filteredSubjects.length} destinations
+                  </span>
                 </div>
 
-                {/* Horizontal scrollable carousel */}
-                <div
-                  ref={carouselRef}
-                  className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory"
-                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
+                <div className="flex flex-wrap justify-center gap-x-6 gap-y-8 overflow-visible px-2 pb-6">
                   {filteredSubjects.map((subject) => {
                     const country = getCountryById(subject.country)
                     const subjectTasks = mockTasks.filter((t) => t.subject === subject.name)
@@ -231,10 +217,7 @@ export default function Subjects() {
                     const isLastStudied = subject.name === 'Biology'
 
                     return (
-                      <div
-                        key={subject.name}
-                        className="snap-center shrink-0"
-                      >
+                      <div key={subject.name} className="flex justify-center">
                         <SubjectIsland
                           subject={subject}
                           country={country}
@@ -247,11 +230,11 @@ export default function Subjects() {
                   })}
 
                   {/* Add new trip card */}
-                  <div className="flex shrink-0 snap-center items-center">
+                  <div className="flex items-center justify-center">
                     <button
                       type="button"
                       onClick={() => { setEditingSubject(null); setShowAddModal(true) }}
-                      className="group flex h-36 w-36 flex-col items-center justify-center rounded-full border-3 border-dashed border-pink-300 bg-white/30 transition-all duration-300 hover:scale-110 hover:border-pink-400 hover:bg-white/50 sm:h-44 sm:w-44"
+                      className="group flex h-36 w-36 flex-col items-center justify-center rounded-full border-3 border-dashed border-pink-300 bg-white/30 transition-all duration-300 hover:scale-105 hover:border-pink-400 hover:bg-white/50 sm:h-44 sm:w-44"
                       aria-label="Plan a new trip"
                     >
                       <Plus className="h-10 w-10 text-pink-400 transition-transform group-hover:scale-110" />
@@ -260,11 +243,6 @@ export default function Subjects() {
                   </div>
                 </div>
 
-                {/* Scroll hint */}
-                <p className="mt-4 flex items-center justify-center gap-1 text-sm text-gray-400">
-                  <MapPin className="h-4 w-4" />
-                  Scroll / Drag to explore
-                </p>
               </div>
             ) : (
               <GlassCard className="flex flex-col items-center justify-center p-12 text-center">
@@ -309,6 +287,59 @@ export default function Subjects() {
             </GlassCard>
           </div>
         </div>
+
+        <section className="mt-10" aria-labelledby="all-subjects-heading">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 id="all-subjects-heading" className="text-2xl font-bold text-gray-800">Your subjects</h2>
+              <p className="mt-1 text-sm text-gray-500">Open a subject to see its own learning page.</p>
+            </div>
+            <Button type="button" onClick={() => { setEditingSubject(null); setShowAddModal(true) }}>
+              <Plus className="h-4 w-4" /> Add subject
+            </Button>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {subjects.map((subject) => {
+              const country = getCountryById(subject.country)
+              const subjectTasks = mockTasks.filter((task) => task.subject === subject.name)
+              const completedCount = subjectTasks.filter((task) => task.completed).length
+              const slug = slugifySubject(subject.name)
+              const SubjectIcon = subjectIcons[subject.icon]
+
+              return (
+                <Link
+                  key={subject.name}
+                  to={`/app/subjects/${slug}`}
+                  className="group flex items-center gap-4 rounded-2xl border border-white/50 bg-white/55 p-4 shadow-sm backdrop-blur-md transition hover:-translate-y-1 hover:bg-white/75 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-300"
+                  aria-label={`Open ${subject.name} subject page`}
+                >
+                  <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl shadow-sm">
+                    <img
+                      src={country.photo}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                    <span className="absolute inset-0 flex items-center justify-center bg-black/25 text-white">
+                      {SubjectIcon ? (
+                        <SubjectIcon className="h-7 w-7 drop-shadow" aria-hidden="true" />
+                      ) : (
+                        <span className="text-2xl drop-shadow" aria-hidden="true">{subject.icon}</span>
+                      )}
+                    </span>
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-bold text-gray-800">{subject.name}</span>
+                    <span className="mt-1 block text-sm text-gray-500">{country.flag} {country.name}</span>
+                    <span className="mt-1 block text-xs text-gray-500">{completedCount} of {subjectTasks.length} tasks complete</span>
+                  </span>
+                  <span className="text-sm font-semibold text-pink-500 transition group-hover:translate-x-1" aria-hidden="true">→</span>
+                </Link>
+              )
+            })}
+          </div>
+        </section>
       </div>
 
       {/* Add/Edit Subject Modal */}
@@ -317,6 +348,7 @@ export default function Subjects() {
         onClose={() => { setShowAddModal(false); setEditingSubject(null) }}
         onSave={handleSaveSubject}
         existingSubject={editingSubject}
+        existingSubjects={subjects}
         usedCountries={usedCountries}
       />
 
@@ -335,6 +367,6 @@ export default function Subjects() {
           </GlassCard>
         </div>
       )}
-    </CountryBackground>
+    </>
   )
 }

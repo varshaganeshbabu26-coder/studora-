@@ -2,15 +2,15 @@
 import { CalendarDays, Check, ChevronLeft, ChevronRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
-import Card from '../components/Card'
+import GlassCard from '../components/GlassCard'
 import Modal from '../components/Modal'
 import mockSubjects from '../data/mockSubjects'
 import mockTasks from '../data/mockTasks'
 
 const priorityStyles = {
-  high: { label: 'High', dot: 'bg-[#000000]', chip: 'bg-[#000000] bg-[#000000] border bg-[#000000]' },
-  medium: { label: 'Medium', dot: 'bg-[#000000]', chip: 'bg-[#000000] bg-[#000000] border bg-[#000000]' },
-  low: { label: 'Low', dot: 'bg-[#000000]', chip: 'bg-[#000000] bg-[#000000] border bg-[#000000]' },
+  high: { label: 'High', dot: 'bg-red-500', chip: 'border border-red-100 bg-red-50 text-red-600' },
+  medium: { label: 'Medium', dot: 'bg-amber-500', chip: 'border border-amber-100 bg-amber-50 text-amber-600' },
+  low: { label: 'Low', dot: 'bg-green-500', chip: 'border border-green-100 bg-green-50 text-green-600' },
 }
 
 const subjectOptions = mockSubjects.map((subject) => subject.name)
@@ -177,24 +177,24 @@ export default function StudyPlanner() {
     <section className="mx-auto max-w-6xl">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-[#C0C0C0]">Your week at a glance</p>
-          <h1 className="mt-2 text-4xl font-black tracking-[-0.05em] text-[#C0C0C0] sm:text-5xl">Study Planner<span className="text-[#C0C0C0]">.</span></h1>
-          <p className="mt-2 max-w-xl text-sm text-[#C0C0C0]">Turn scattered intentions into a rhythm you can actually keep.</p>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-pink-500">Your week at a glance</p>
+          <h1 className="mt-2 text-4xl font-black tracking-[-0.05em] text-gray-800 sm:text-5xl">Study Planner<span className="text-pink-500">.</span></h1>
+          <p className="mt-2 max-w-xl text-sm text-gray-600">Turn scattered intentions into a rhythm you can actually keep.</p>
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="inline-flex rounded-xl border border-[#C0C0C0] bg-[#000000] p-1 shadow-sm">
+          <div className="inline-flex rounded-xl border border-white/50 bg-white/50 p-1 shadow-sm backdrop-blur-md">
             <button
               type="button"
               onClick={() => setView('list')}
-              className={`rounded-lg px-3 py-2 text-sm font-bold transition ${view === 'list' ? 'bg-[#000000] text-[#C0C0C0]' : 'text-[#C0C0C0] hover:text-[#C0C0C0]'}`}
+              className={`rounded-lg px-3 py-2 text-sm font-bold transition ${view === 'list' ? 'bg-gradient-to-r from-pink-400 to-rose-400 text-white shadow-md' : 'text-gray-600 hover:bg-white/70 hover:text-pink-600'}`}
             >
               List
             </button>
             <button
               type="button"
               onClick={() => setView('calendar')}
-              className={`rounded-lg px-3 py-2 text-sm font-bold transition ${view === 'calendar' ? 'bg-[#000000] text-[#C0C0C0]' : 'text-[#C0C0C0] hover:text-[#C0C0C0]'}`}
+              className={`rounded-lg px-3 py-2 text-sm font-bold transition ${view === 'calendar' ? 'bg-gradient-to-r from-pink-400 to-rose-400 text-white shadow-md' : 'text-gray-600 hover:bg-white/70 hover:text-pink-600'}`}
             >
               Calendar
             </button>
@@ -209,16 +209,16 @@ export default function StudyPlanner() {
       {view === 'list' ? (
         <div className="space-y-5">
           {groupedTasks.length === 0 ? (
-            <Card className="border-dashed border-[#C0C0C0] p-8 text-center text-[#C0C0C0]">
+            <GlassCard className="border-dashed p-8 text-center text-gray-600">
               No tasks scheduled yet. Add your first study task.
-            </Card>
+            </GlassCard>
           ) : (
             groupedTasks.map(([date, items]) => (
-              <Card key={date} className="p-4 sm:p-5">
-                <div className="mb-4 flex items-center justify-between gap-3 border-b border-[#C0C0C0] pb-3">
+              <GlassCard key={date} className="p-4 sm:p-5">
+                <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/50 pb-3">
                   <div>
-                    <p className="text-[#C0C0C0] font-black uppercase tracking-[0.2em] text-[#C0C0C0]">Due date</p>
-                    <h2 className="mt-1 text-lg font-black text-[#C0C0C0]">{formatDateLabel(date)}</h2>
+                    <p className="text-xs font-black uppercase tracking-[0.2em] text-pink-500">Due date</p>
+                    <h2 className="mt-1 text-lg font-black text-gray-800">{formatDateLabel(date)}</h2>
                   </div>
                   <Badge variant="default">{items.length} tasks</Badge>
                 </div>
@@ -227,27 +227,27 @@ export default function StudyPlanner() {
                   {items.map((task) => (
                     <div
                       key={task.id}
-                      className="flex flex-col gap-3 rounded-xl border border-[#C0C0C0] bg-[#000000] p-3 transition hover:border-[#C0C0C0] sm:flex-row sm:items-center sm:justify-between"
+                      className="flex flex-col gap-3 rounded-xl border border-white/50 bg-white/50 p-3 transition hover:bg-white/75 sm:flex-row sm:items-center sm:justify-between"
                     >
                       <div className="flex items-start gap-3">
                         <input
                           type="checkbox"
                           checked={task.completed}
                           onChange={() => toggleTaskCompletion(task.id)}
-                          className="mt-1 h-5 w-5 accent-[#000000]"
+                          className="mt-1 h-5 w-5 accent-pink-500"
                           aria-label={`Mark ${task.title} complete`}
                         />
 
                         <div>
-                          <p className={`text-base font-bold ${task.completed ? 'text-[#C0C0C0] line-through' : 'text-[#C0C0C0]'}`}>
+                          <p className={`text-base font-bold ${task.completed ? 'text-gray-400 line-through' : 'text-gray-800'}`}>
                             {task.title}
                           </p>
 
                           <div className="mt-2 flex flex-wrap items-center gap-2">
-                            <Badge variant="primary" className="!bg-[#000000] !text-[#C0C0C0]">
+                            <Badge variant="primary">
                               {task.subject}
                             </Badge>
-                            <span className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[#C0C0C0] font-semibold uppercase tracking-[0.14em] ${priorityStyles[task.priority].chip}`}>
+                            <span className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 font-semibold uppercase tracking-[0.14em] ${priorityStyles[task.priority].chip}`}>
                               <span className={`h-2 w-2 rounded-full ${priorityStyles[task.priority].dot}`} />
                               {priorityStyles[task.priority].label}
                             </span>
@@ -259,31 +259,31 @@ export default function StudyPlanner() {
                         <Button type="button" variant="ghost" size="sm" onClick={() => openEditModal(task)}>
                           <Pencil className="h-4 w-4" /> Edit
                         </Button>
-                        <Button type="button" variant="outline" size="sm" onClick={() => deleteTask(task.id)} className="bg-[#000000] bg-[#000000] hover:bg-[#000000] hover:bg-[#000000]">
+                        <Button type="button" variant="outline" size="sm" onClick={() => deleteTask(task.id)}>
                           <Trash2 className="h-4 w-4" /> Delete
                         </Button>
                       </div>
                     </div>
                   ))}
                 </div>
-              </Card>
+              </GlassCard>
             ))
           )}
         </div>
       ) : (
-        <Card className="p-4 sm:p-6">
+        <GlassCard className="p-4 sm:p-6">
           <div className="mb-5 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 bg-[#000000]">
-              <CalendarDays className="h-5 w-5 text-[#C0C0C0]" />
-              <h2 className="text-xl font-black text-[#C0C0C0]">{monthLabel}</h2>
+            <div className="flex items-center gap-2">
+              <CalendarDays className="h-5 w-5 text-pink-500" />
+              <h2 className="text-xl font-black text-gray-800">{monthLabel}</h2>
             </div>
-            <div className="flex items-center gap-2 text-[#C0C0C0]">
-              <span className="rounded-lg border border-[#C0C0C0] p-2"><ChevronLeft className="h-4 w-4" /></span>
-              <span className="rounded-lg border border-[#C0C0C0] p-2"><ChevronRight className="h-4 w-4" /></span>
+            <div className="flex items-center gap-2 text-gray-500">
+              <button type="button" aria-label="Previous month" className="rounded-lg border border-white/60 bg-white/50 p-2 transition hover:bg-white/80"><ChevronLeft className="h-4 w-4" /></button>
+              <button type="button" aria-label="Next month" className="rounded-lg border border-white/60 bg-white/50 p-2 transition hover:bg-white/80"><ChevronRight className="h-4 w-4" /></button>
             </div>
           </div>
 
-          <div className="grid grid-cols-7 gap-2 text-center text-[#C0C0C0] font-black uppercase tracking-[0.18em] text-[#C0C0C0]">
+          <div className="grid grid-cols-7 gap-2 text-center text-xs font-black uppercase tracking-[0.18em] text-gray-500">
             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
               <div key={day} className="py-2">
                 {day}
@@ -301,36 +301,36 @@ export default function StudyPlanner() {
                 <div
                   key={key}
                   className={`min-h-[120px] rounded-xl border p-2 ${
-                    isCurrentMonth ? 'border-[#C0C0C0] bg-[#000000]' : 'border-[#C0C0C0] bg-[#000000] text-[#C0C0C0]'
+                    isCurrentMonth ? 'border-white/50 bg-white/45' : 'border-white/30 bg-white/20 text-gray-400'
                   }`}
                 >
                   <div className="mb-2 flex items-center justify-between">
-                    <span className={`text-xs font-bold ${isCurrentMonth ? 'text-[#C0C0C0]' : 'text-[#C0C0C0]'}`}>
+                    <span className={`text-xs font-bold ${isCurrentMonth ? 'text-gray-700' : 'text-gray-400'}`}>
                       {date.getDate()}
                     </span>
                   </div>
 
                   <div className="space-y-1.5">
                     {tasksForDate.slice(0, 2).map((task) => (
-                      <div key={task.id} className="rounded-md bg-[#000000] px-1.5 py-1 text-[#C0C0C0] font-bold text-[#C0C0C0]">
+                      <div key={task.id} className="rounded-md bg-pink-100 px-1.5 py-1 text-xs font-semibold text-pink-700">
                         {task.title}
                       </div>
                     ))}
                     {tasksForDate.length > 2 && (
-                      <div className="text-[#C0C0C0] bg-[#000000]">+{tasksForDate.length - 2} more</div>
+                      <div className="text-xs text-gray-500">+{tasksForDate.length - 2} more</div>
                     )}
                   </div>
                 </div>
               )
             })}
           </div>
-        </Card>
+        </GlassCard>
       )}
 
       <Modal open={isModalOpen} onClose={closeModal} title={editingTaskId ? 'Edit task' : 'Add task'}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="title" className="mb-2 block text-sm font-medium bg-[#000000] dark:bg-[#000000]">
+            <label htmlFor="title" className="mb-2 block text-sm font-medium text-gray-700">
               Title
             </label>
             <input
@@ -339,13 +339,13 @@ export default function StudyPlanner() {
               value={form.title}
               onChange={handleFieldChange}
               placeholder="Finish reading chapter"
-              className="w-full rounded-xl border bg-[#000000] bg-[#000000] px-3 py-2.5 text-sm bg-[#000000] outline-none transition focus:border-[#C0C0C0]"
+              className="w-full rounded-xl border border-white/50 bg-white/60 px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-pink-300 focus:ring-2 focus:ring-pink-200"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="subject" className="mb-2 block text-sm font-medium bg-[#000000] dark:bg-[#000000]">
+            <label htmlFor="subject" className="mb-2 block text-sm font-medium text-gray-700">
               Subject
             </label>
             <select
@@ -353,7 +353,7 @@ export default function StudyPlanner() {
               name="subject"
               value={form.subject}
               onChange={handleFieldChange}
-              className="w-full rounded-xl border bg-[#000000] bg-[#000000] px-3 py-2.5 text-sm bg-[#000000] outline-none transition focus:border-[#C0C0C0]"
+              className="w-full rounded-xl border border-white/50 bg-white/60 px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-pink-300 focus:ring-2 focus:ring-pink-200"
             >
               {subjectOptions.map((subject) => (
                 <option key={subject} value={subject}>
@@ -365,7 +365,7 @@ export default function StudyPlanner() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="dueDate" className="mb-2 block text-sm font-medium bg-[#000000] dark:bg-[#000000]">
+              <label htmlFor="dueDate" className="mb-2 block text-sm font-medium text-gray-700">
                 Due date
               </label>
               <input
@@ -374,13 +374,13 @@ export default function StudyPlanner() {
                 type="date"
                 value={form.dueDate}
                 onChange={handleFieldChange}
-                className="w-full rounded-xl border bg-[#000000] bg-[#000000] px-3 py-2.5 text-sm bg-[#000000] outline-none transition focus:border-[#C0C0C0]"
+                className="w-full rounded-xl border border-white/50 bg-white/60 px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-pink-300 focus:ring-2 focus:ring-pink-200"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="priority" className="mb-2 block text-sm font-medium bg-[#000000] dark:bg-[#000000]">
+              <label htmlFor="priority" className="mb-2 block text-sm font-medium text-gray-700">
                 Priority
               </label>
               <select
@@ -388,7 +388,7 @@ export default function StudyPlanner() {
                 name="priority"
                 value={form.priority}
                 onChange={handleFieldChange}
-                className="w-full rounded-xl border bg-[#000000] bg-[#000000] px-3 py-2.5 text-sm bg-[#000000] outline-none transition focus:border-[#C0C0C0]"
+                className="w-full rounded-xl border border-white/50 bg-white/60 px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-pink-300 focus:ring-2 focus:ring-pink-200"
               >
                 <option value="high">High</option>
                 <option value="medium">Medium</option>

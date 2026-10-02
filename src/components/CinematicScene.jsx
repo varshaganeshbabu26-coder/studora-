@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 
-export default function CinematicScene({ country, stopIndex, isTransitioning, className = '' }) {
+export default function CinematicScene({ country, stopIndex, isTransitioning, className = '', showBackground = true }) {
   const [currentBg, setCurrentBg] = useState(0)
   const [prevBg, setPrevBg] = useState(0)
   const [showCaption, setShowCaption] = useState(false)
@@ -23,38 +23,31 @@ export default function CinematicScene({ country, stopIndex, isTransitioning, cl
 
   return (
     <div ref={containerRef} className={`relative h-full w-full overflow-hidden ${className}`}>
-      {/* Previous background (for crossfade) */}
-      <div
-        className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
-        style={{ backgroundImage: `url(${stops[prevBg]?.bg || currentStop.bg})` }}
-      />
-
-      {/* Current background with Ken Burns */}
-      <div
-        className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ${isTransitioning ? 'opacity-100' : 'opacity-100'}`}
-        style={{
-          backgroundImage: `url(${currentStop.bg})`,
-          animation: 'ken-burns 20s ease-in-out infinite alternate',
-        }}
-      />
-
-      {/* Film grain overlay */}
-      <div className="film-grain absolute inset-0 pointer-events-none" />
-
-      {/* Vignette */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%)',
-      }} />
-
-      {/* Gradient overlay for readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50 pointer-events-none" />
-
-      {/* Light leak effect during transition */}
-      {isTransitioning && (
-        <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255,200,150,0.3) 50%, transparent 100%)',
-          animation: 'light-leak 1.5s ease-out forwards',
-        }} />
+      {showBackground && (
+        <>
+          <div
+            className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+            style={{ backgroundImage: `url(${stops[prevBg]?.bg || currentStop.bg})` }}
+          />
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+            style={{
+              backgroundImage: `url(${currentStop.bg})`,
+              animation: 'ken-burns 20s ease-in-out infinite alternate',
+            }}
+          />
+          <div className="film-grain absolute inset-0 pointer-events-none" />
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%)',
+          }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50 pointer-events-none" />
+          {isTransitioning && (
+            <div className="absolute inset-0 pointer-events-none" style={{
+              background: 'linear-gradient(90deg, transparent 0%, rgba(255,200,150,0.3) 50%, transparent 100%)',
+              animation: 'light-leak 1.5s ease-out forwards',
+            }} />
+          )}
+        </>
       )}
 
       {/* Caption */}

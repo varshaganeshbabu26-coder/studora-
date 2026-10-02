@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Plus, Calendar } from 'lucide-react'
 import Modal from './Modal'
 import Input from './Input'
 import Button from './Button'
 import CountryPicker from './CountryPicker'
+import { getCountryById } from '../data/countries'
+import { slugifySubject } from '../data/subjectStorage'
 
-export default function AddSubjectModal({ open, onClose, onSave, existingSubject, usedCountries = [] }) {
+export default function AddSubjectModal({ open, onClose, onSave, existingSubject, existingSubjects = [], usedCountries = [] }) {
   const [name, setName] = useState(existingSubject?.name || '')
   const [emoji, setEmoji] = useState(existingSubject?.icon || '📚')
   const [examDate, setExamDate] = useState(existingSubject?.examDate || '')
@@ -15,9 +17,26 @@ export default function AddSubjectModal({ open, onClose, onSave, existingSubject
 
   const isEditing = !!existingSubject
 
+  useEffect(() => {
+    if (!open) return
+    setName(existingSubject?.name || '')
+    setEmoji(existingSubject?.icon || '📚')
+    setExamDate(existingSubject?.examDate || '')
+    setCountryId(existingSubject?.country || '')
+    setError('')
+  }, [open, existingSubject])
+
   function handleSave() {
-    if (!name.trim()) {
-      setError('Please enter a subject name')
+    const subjectSlug = slugifySubject(name)
+    if (!subjectSlug) {
+      setError('Enter a subject name using letters or numbers')
+      return
+    }
+    if (existingSubjects.some((subject) => (
+      slugifySubject(subject.name) === subjectSlug &&
+      slugifySubject(subject.name) !== slugifySubject(existingSubject?.name || '')
+    ))) {
+      setError('A subject with this name already exists')
       return
     }
     if (!countryId) {
@@ -86,8 +105,8 @@ export default function AddSubjectModal({ open, onClose, onSave, existingSubject
             >
               {countryId ? (
                 <>
-                  <span className="text-2xl">{existingSubject ? getCountryFlag(existingSubject.country) : ''}</span>
-                  <span className="font-medium text-gray-700">{existingSubject ? getCountryName(existingSubject.country) : ''}</span>
+                  <span className="text-2xl">{getCountryFlag(countryId)}</span>
+                  <span className="font-medium text-gray-700">{getCountryName(countryId)}</span>
                 </>
               ) : (
                 <span className="text-gray-400">Choose a country...</span>
@@ -126,11 +145,9 @@ export default function AddSubjectModal({ open, onClose, onSave, existingSubject
 }
 
 function getCountryFlag(id) {
-  const flags = { japan: '🇯🇵', egypt: '🇪🇬', usa: '🇺🇸', france: '🇫🇷', uk: '🇬🇧', brazil: '🇧🇷', australia: '🇦🇺', india: '🇮🇳', greece: '🇬🇷', mexico: '🇲🇽', china: '🇨🇳', italy: '🇮🇹' }
-  return flags[id] || '🌍'
+  return getCountryById(id)?.flag || '🌍'
 }
 
 function getCountryName(id) {
-  const names = { japan: 'Japan', egypt: 'Egypt', usa: 'USA', france: 'France', uk: 'United Kingdom', brazil: 'Brazil', australia: 'Australia', india: 'India', greece: 'Greece', mexico: 'Mexico', china: 'China', italy: 'Italy' }
-  return names[id] || id
+  return getCountryById(id)?.name || id
 }

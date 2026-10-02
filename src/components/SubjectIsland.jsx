@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
-import { Lock, CheckCircle2, Plus } from 'lucide-react'
+import { CheckCircle2 } from 'lucide-react'
 import BunnyAvatar from './BunnyAvatar'
+import { slugifySubject } from '../data/subjectStorage'
 
 export default function SubjectIsland({ subject, country, taskCount, completedCount, isLastStudied, onClick, className = '' }) {
   const progress = subject.progress || 0
   const isCompleted = progress >= 100
-  const isNotStarted = completedCount === 0
-  const slug = subject.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+  const slug = slugifySubject(subject.name)
 
   return (
     <div className={`group relative flex flex-col items-center ${className}`}>
@@ -17,16 +17,12 @@ export default function SubjectIsland({ subject, country, taskCount, completedCo
       >
         {/* Island body with photo */}
         <div
-          className={`relative flex h-36 w-36 items-center justify-center overflow-hidden rounded-full transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-2 sm:h-44 sm:w-44 ${
-            isNotStarted ? 'opacity-70' : ''
-          }`}
+          className="relative flex h-36 w-36 items-center justify-center overflow-hidden rounded-full transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-2 sm:h-44 sm:w-44"
           style={{
             border: `3px solid ${isCompleted ? '#FFD700' : country.colors.primary}90`,
             boxShadow: isCompleted
               ? '0 0 30px rgba(255, 215, 0, 0.3)'
-              : isNotStarted
-                ? 'none'
-                : `0 0 20px ${country.colors.primary}40`,
+              : `0 0 20px ${country.colors.primary}40`,
           }}
         >
           {/* Country photo */}
@@ -53,13 +49,6 @@ export default function SubjectIsland({ subject, country, taskCount, completedCo
                 className="transition-all duration-700"
               />
             </svg>
-          )}
-
-          {/* Lock overlay for not started */}
-          {isNotStarted && (
-            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-white/50">
-              <Lock className="h-8 w-8 text-gray-500" />
-            </div>
           )}
 
           {/* Stamp badge for completed */}

@@ -13,11 +13,10 @@ import { FloatingTopNav, FloatingDockNav } from '../components/FloatingNav'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
 import ProgressBar from '../components/ProgressBar'
-import mockSubjects from '../data/mockSubjects'
+import SubjectPomodoro from '../components/SubjectPomodoro'
 import mockTasks from '../data/mockTasks'
 import { getCountryById } from '../data/countries'
-
-const slugify = (value) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+import { loadSubjects, slugifySubject } from '../data/subjectStorage'
 
 export default function SubjectDetail() {
   const { id } = useParams()
@@ -36,7 +35,7 @@ export default function SubjectDetail() {
   const playIntervalRef = useRef(null)
 
   const subject = useMemo(() => {
-    return mockSubjects.find((item) => slugify(item.name) === id)
+    return loadSubjects().find((item) => slugifySubject(item.name) === id)
   }, [id])
 
   const country = subject ? getCountryById(subject.country) : null
@@ -147,7 +146,7 @@ export default function SubjectDetail() {
 
   if (!subject || !country) {
     return (
-      <div className="relative min-h-screen bg-gradient-to-b from-pink-100 to-purple-100">
+      <div className="relative min-h-screen">
         <FloatingTopNav />
         <FloatingDockNav />
         <div className="mx-auto max-w-4xl px-4 pb-24 pt-24 md:pt-28">
@@ -166,7 +165,6 @@ export default function SubjectDetail() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Cinematic Background — full page */}
       <div className="fixed inset-0 z-0">
         <CinematicScene
           country={country}
@@ -329,6 +327,8 @@ export default function SubjectDetail() {
 
           {/* Right Panel: Info + Tools */}
           <div className="space-y-4">
+            <SubjectPomodoro subjectName={subject.name} />
+
             {/* Current stop info */}
             <GlassCard className="p-5">
               <h3 className="text-sm font-bold uppercase tracking-wider text-pink-500">Current Stop</h3>
